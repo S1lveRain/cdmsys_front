@@ -4,7 +4,7 @@ body {
     font-weight: 500;
     background-color: #1e1e1e;
     color: white;
-    font-family: "Roboto Light";
+    font-family: "Avenir";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-repeat: repeat;
@@ -27,7 +27,7 @@ header a {
 }
 
 header a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 
