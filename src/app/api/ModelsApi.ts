@@ -23,7 +23,23 @@ export const modelsApi = createApi({
             }),
             providesTags: (result) => ["Model"],
         }),
+        deleteModelObject: build.mutation({
+            query: ({modelName, id}) => ({
+                url: `/${modelName}/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Model"],
+        }),
+        addModelObject: build.mutation({
+            query: ({ modelName, body }) => ({
+                url: `/${modelName}/`,
+                method: "POST",
+                body: body,
+            }),
+
+            invalidatesTags: ["Model"],
+        }),
     }),
 });
 
-export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery } = modelsApi;
+export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery, useDeleteModelObjectMutation, useAddModelObjectMutation } = modelsApi;

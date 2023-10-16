@@ -1,11 +1,12 @@
 .itemListWrapper {
-    width: 80vw;
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    border: 2px solid rgba(83, 82, 82, 0.7);
-    padding: 5px;
-    border-radius: 15px;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    flex-direction: column;
+    padding: 10px;
+    row-gap: 10px;
 }
 
 .itemContainer {
@@ -15,4 +16,21 @@
     flex-direction: row;
     padding: 5px;
     align-items: center;
+}
+
+.itemWrapper {
+    width: 80vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border: 2px solid rgba(83, 82, 82, 0.7);
+    padding: 5px;
+    border-radius: 15px;
+}
+
+.itemActions {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    padding: 5px;
 }
