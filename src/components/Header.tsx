@@ -80,6 +80,9 @@ const Header: FC = () => {
                     <Typography id="modal-modal-description" sx={{mt: 2}}>
                         <div style={{display: 'flex', flexDirection: 'column', gap: 15, padding: 10}}>
                             {modelName && !isLoading && devModel.fields && devModel.fields.map((el: Field) => {
+                                if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
+                                    return null;
+                                }
                                 return (
                                     <div key={el.fieldName}>
                                         <TextField id="filled-basic" label={el.fieldName} variant="outlined"
