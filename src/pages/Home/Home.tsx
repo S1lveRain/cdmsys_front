@@ -1,5 +1,5 @@
 import React from 'react';
-import { Item } from '../../components/Item/Item';
+import { Model } from '../../components/Model/Model';
 import styles from './Home.module.css'
 import {useGetModelsQuery} from "../../app/api/ModelsApi";
 
@@ -10,7 +10,7 @@ export const Home = () => {
           {data && data.map((el: any) => {
               return (
                   <div className={styles.homeWrapper}>
-                      <Item name={el.modelName} count={el.count} />
+                      <Model name={el.modelName} count={el.count} />
                   </div>
               )
           })}

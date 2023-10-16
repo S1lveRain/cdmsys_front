@@ -6,7 +6,16 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {TextField} from "@mui/material";
-import {useGetDevModelQuery} from "../app/api/ModelsApi";
+import {useAddModelObjectMutation, useGetDevModelQuery} from "../app/api/ModelsApi";
+
+
+interface FormData {
+    [key: string]: any;
+}
+
+interface Field {
+    fieldName: string;
+}
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -24,12 +33,29 @@ const modalStyle = {
 const Header: FC = () => {
 
     const {modelName} = useParams();
-
+    const [formData, setFormData] = React.useState<FormData>({});
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
+    const [addObject] = useAddModelObjectMutation()
+
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        setFormData(prevData => ({
+            ...prevData,
+            [fieldName]: value
+        }));
+    };
+
+    const handleAddButtonClick = async() => {
+        try {
+            await addObject({modelName: modelName, body: formData})
+        } catch (error) {}
+        setFormData({});
+        handleClose();
+    };
 
     return (
         <>
@@ -37,7 +63,8 @@ const Header: FC = () => {
                 <Link to="/">
                     <AiOutlineHome color={'black'} size={24}/>
                 </Link>
-                {modelName && <Button variant="contained" size={'small'} onClick={handleOpen}>+</Button>
+                {
+                    modelName && <Button variant="contained" size={'small'} onClick={handleOpen}>+</Button>
                 }
             </header>
             <Modal
@@ -52,15 +79,17 @@ const Header: FC = () => {
                     </Typography>
                     <Typography id="modal-modal-description" sx={{mt: 2}}>
                         <div style={{display: 'flex', flexDirection: 'column', gap: 15, padding: 10}}>
-                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
+                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: Field) => {
                                 return (
-                                    <div>
+                                    <div key={el.fieldName}>
                                         <TextField id="filled-basic" label={el.fieldName} variant="outlined"
-                                                   size={'medium'} fullWidth/>
+                                                   size={'medium'} fullWidth
+                                                   value={formData[el.fieldName] || ''}
+                                                   onChange={(e) => handleFieldChange(el.fieldName, e.target.value)} />
                                     </div>
                                 );
                             })}
-                            <Button variant={'outlined'} size={'large'}>Добавить</Button>
+                            <Button variant={'outlined'} size={'large'} onClick={handleAddButtonClick}>Добавить</Button>
                         </div>
                     </Typography>
                 </Box>

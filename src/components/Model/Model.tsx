@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import {Link} from "react-router-dom";
-import styles from './Item.module.css'
+import styles from './Model.module.css'
 
 interface ItemI {
     name: string,
     count?: string
 }
-export const Item:FC<ItemI> = ({name, count}) => {
+export const Model:FC<ItemI> = ({name, count}) => {
     return (
         <Link to={`/model/${name}`} className={styles.itemName}>
         <div className={styles.itemWrapper}>
