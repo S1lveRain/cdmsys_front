@@ -1,15 +1,4 @@
-.listItemContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    text-align: center;
-    flex-direction: column;
-    padding: 10px;
-    row-gap: 10px;
-}
-
-.itemWrapper {
+.itemListWrapper {
     width: 80vw;
     display: flex;
     flex-direction: row;

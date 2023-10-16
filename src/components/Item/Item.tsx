@@ -4,11 +4,11 @@ import styles from './Item.module.css'
 
 interface ItemI {
     name: string,
-    count: string
+    count?: string
 }
 export const Item:FC<ItemI> = ({name, count}) => {
     return (
-        <Link to={'/item/'} className={styles.itemName}>
+        <Link to={`/model/${name}`} className={styles.itemName}>
         <div className={styles.itemWrapper}>
 
                 <div className={styles.itemContainer}>

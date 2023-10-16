@@ -1,6 +1,7 @@
 import {createBrowserRouter} from "react-router-dom";
 import { Home } from "../pages/Home/Home";
 import Layout from "../pages/Layout";
+import {ModelEdit} from "../pages/ModelEdit/ModelEdit";
 
 export const router = createBrowserRouter([
     {
@@ -10,6 +11,16 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />
+            }
+        ]
+    },
+    {
+        path: '/model/:modelName',
+        element: <Layout />,
+        children: [
+            {
+                index: true,
+                element: <ModelEdit />
             }
         ]
     }
