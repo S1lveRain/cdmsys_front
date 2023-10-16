@@ -17,7 +17,13 @@ export const modelsApi = createApi({
             }),
             providesTags: (result) => ["Model"],
         }),
+        getDevModel: build.query({
+            query: (modelName) => ({
+                url: `/dev/models/${modelName}/`
+            }),
+            providesTags: (result) => ["Model"],
+        }),
     }),
 });
 
-export const { useGetModelsQuery, useGetModelQuery } = modelsApi;
+export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery } = modelsApi;

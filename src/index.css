@@ -2,8 +2,8 @@ body {
     display: grid;
     margin: 0;
     font-weight: 500;
-    background-color: #1e1e1e;
-    color: white;
+    background-color: #fff;
+    color: black;
     font-family: "Avenir";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -12,7 +12,7 @@ body {
 }
 
 header {
-    background-color: #2c2b2b;
+    background-color: whitesmoke;
     color: #fff;
     padding: 10px;
     display: flex;
