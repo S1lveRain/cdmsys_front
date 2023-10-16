@@ -1,14 +1,19 @@
 import React from 'react';
 import { Item } from '../../components/Item/Item';
 import styles from './Home.module.css'
-import {useGetGroupsQuery} from "../../app/api/ItemsApi";
+import {useGetModelsQuery} from "../../app/api/ModelsApi";
 
 export const Home = () => {
-
-
+    const {data} = useGetModelsQuery('');
     return (
-        <div className={styles.homeWrapper}>
-            <Item name={'Антон'} count={'10'} />
-        </div>
+      <div>
+          {data && data.map((el: any) => {
+              return (
+                  <div className={styles.homeWrapper}>
+                      <Item name={el.modelName} count={`${data.length}`} />
+                  </div>
+              )
+          })}
+      </div>
     );
 };
