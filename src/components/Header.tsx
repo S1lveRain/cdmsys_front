@@ -51,7 +51,7 @@ const Header: FC = () => {
 
     const handleAddButtonClick = async() => {
         try {
-            await addObject({modelName, formData})
+            await addObject({modelName: modelName, body: formData})
         } catch (error) {}
         setFormData({});
         handleClose();
