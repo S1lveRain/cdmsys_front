@@ -10,7 +10,7 @@ export const Home = () => {
           {data && data.map((el: any) => {
               return (
                   <div className={styles.homeWrapper}>
-                      <Item name={el.modelName} count={`${data.length}`} />
+                      <Item name={el.modelName} count={el.count} />
                   </div>
               )
           })}
