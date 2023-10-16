@@ -11,17 +11,11 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />
-            }
-        ]
-    },
-    {
-        path: '/model/:modelName',
-        element: <Layout />,
-        children: [
+            },
             {
-                index: true,
+                path: '/model/:modelName',
                 element: <ModelEdit />
             }
         ]
-    }
+    },
 ])
