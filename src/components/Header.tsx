@@ -7,11 +7,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {TextField} from "@mui/material";
 import {useAddModelObjectMutation, useGetDevModelQuery} from "../app/api/ModelsApi";
-
-
-interface FormData {
-    [key: string]: any;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import {clearFormData, selectFormData, setFormData} from "../app/slices/formDataSlice";
 
 interface Field {
     fieldName: string;
@@ -33,7 +30,8 @@ const modalStyle = {
 const Header: FC = () => {
 
     const {modelName} = useParams();
-    const [formData, setFormData] = React.useState<FormData>({});
+    const formData = useSelector(selectFormData);
+    const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -42,18 +40,15 @@ const Header: FC = () => {
     const [addObject] = useAddModelObjectMutation()
 
 
-    const handleFieldChange = (fieldName: string, value: any) => {
-        setFormData(prevData => ({
-            ...prevData,
-            [fieldName]: value
-        }));
+    const handleFieldChange = (fieldName: string, value: string) => {
+        dispatch(setFormData({ [fieldName]: value }));
     };
 
     const handleAddButtonClick = async() => {
         try {
             await addObject({modelName: modelName, body: formData})
         } catch (error) {}
-        setFormData({});
+        dispatch(clearFormData());
         handleClose();
     };
 

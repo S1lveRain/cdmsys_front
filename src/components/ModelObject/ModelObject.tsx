@@ -18,6 +18,8 @@ export const ModelObject:FC<ModelObjectI> = ({modelName, id, name}) => {
         } catch (error) {}
     };
 
+
+
     return (
         <div className={styles.itemWrapper}>
             <div className={styles.itemContainer}>
