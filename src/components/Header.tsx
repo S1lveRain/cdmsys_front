@@ -1,8 +1,7 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {AiOutlineHome} from "react-icons/ai";
 import AddIcon from '@mui/icons-material/Add';
-import MenuIcon from '@mui/icons-material/Menu';
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -41,8 +40,14 @@ const Header: FC = () => {
     const handleClose = () => setOpen(false);
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
-    const [addObject, {error: addingError}] = useAddModelObjectMutation()
+    const [addObject] = useAddModelObjectMutation()
 
+    useEffect(() => {
+        setTimeout(() => {
+            setSuccess(false);
+            setError(false)
+        }, 5000);
+    }, [success, error]);
 
     const handleFieldChange = (fieldName: string, value: string) => {
         dispatch(setFormData({[fieldName]: value}));

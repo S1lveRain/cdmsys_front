@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useParams} from "react-router-dom";
 import {useGetModelQuery} from "../../app/api/ModelsApi";
 import styles from './ModelEdit.module.css'
@@ -14,6 +14,13 @@ export const ModelEdit = () => {
 
     const [success, setSuccess] = React.useState(false)
     const [error, setError] = React.useState(false)
+
+    useEffect(() => {
+        setTimeout(() => {
+            setSuccess(false);
+            setError(false)
+        }, 5000);
+    }, [success, error]);
 
     return (
         <>
