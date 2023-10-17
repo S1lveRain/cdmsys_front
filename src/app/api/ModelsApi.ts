@@ -23,6 +23,12 @@ export const modelsApi = createApi({
             }),
             providesTags: (result) => ["Model"],
         }),
+        getOneModelObject: build.query({
+            query: ({modelName, id}) => ({
+                url: `/${modelName}/${id}`
+            }),
+           providesTags: (result) => ["Model"]
+        }),
         deleteModelObject: build.mutation({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`,
@@ -39,7 +45,15 @@ export const modelsApi = createApi({
 
             invalidatesTags: ["Model"],
         }),
+        updateModelObject: build.mutation({
+            query: ({modelName, body, id}) => ({
+                url: `/${modelName}/${id}`,
+                method: "PUT",
+                body: body
+            }),
+            invalidatesTags: ["Model"]
+        }),
     }),
 });
 
-export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery, useDeleteModelObjectMutation, useAddModelObjectMutation } = modelsApi;
+export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery, useGetOneModelObjectQuery, useDeleteModelObjectMutation, useAddModelObjectMutation, useUpdateModelObjectMutation } = modelsApi;
