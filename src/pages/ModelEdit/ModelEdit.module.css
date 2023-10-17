@@ -1,10 +1,13 @@
-.objectsListWrapper {
+.objectsListContainer {
     display: flex;
     justify-content: center;
-    align-items: center;
-    align-content: center;
-    text-align: center;
-    flex-direction: column;
-    padding: 10px;
-    row-gap: 10px;
+}
+
+.objectsListWrapper {
+    gap: 20px;
+    flex-direction: row;
+    padding: 20px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    display: flex;
 }

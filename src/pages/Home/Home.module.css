@@ -1,5 +1,14 @@
 .homeWrapper {
-    padding: 15px;
+    padding: 10px;
     display: flex;
     justify-content: center;
+    text-align: center;
+}
+
+.homeContainer {
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
 }

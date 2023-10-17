@@ -3,10 +3,12 @@
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    padding: 5px;
+    margin-top: 10px;
     align-items: center;
+    gap: 10px;
 }
 
+/*
 .itemWrapper {
     width: 80vw;
     display: flex;
@@ -22,4 +24,4 @@
     flex-direction: row;
     column-gap: 10px;
     padding: 5px;
-}
+}*/

@@ -1,13 +1,15 @@
 import React, {FC} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {AiOutlineHome} from "react-icons/ai";
+import AddIcon from '@mui/icons-material/Add';
+import MenuIcon from '@mui/icons-material/Menu';
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {TextField} from "@mui/material";
+import {Alert, AppBar, IconButton, TextField, Toolbar} from "@mui/material";
 import {useAddModelObjectMutation, useGetDevModelQuery} from "../app/api/ModelsApi";
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {clearFormData, selectFormData, setFormData} from "../app/slices/formDataSlice";
 
 interface Field {
@@ -33,35 +35,80 @@ const Header: FC = () => {
     const formData = useSelector(selectFormData);
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
+    const [success, setSuccess] = React.useState(false)
+    const [error, setError] = React.useState(false)
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
-    const [addObject] = useAddModelObjectMutation()
+    const [addObject, {error: addingError}] = useAddModelObjectMutation()
 
 
     const handleFieldChange = (fieldName: string, value: string) => {
-        dispatch(setFormData({ [fieldName]: value }));
+        dispatch(setFormData({[fieldName]: value}));
     };
 
-    const handleAddButtonClick = async() => {
+    const handleAddButtonClick = async () => {
         try {
             await addObject({modelName: modelName, body: formData})
-        } catch (error) {}
+            setSuccess(true)
+        } catch (error) {
+            setError(true)
+        }
         dispatch(clearFormData());
         handleClose();
     };
 
     return (
         <>
-            <header>
-                <Link to="/">
-                    <AiOutlineHome color={'black'} size={24}/>
-                </Link>
-                {
-                    modelName && <Button variant="contained" size={'small'} onClick={handleOpen}>+</Button>
-                }
-            </header>
+            <Box sx={{flexGrow: 1}}>
+                <AppBar position="static" color={'default'}>
+                    <Toolbar>
+                        <Link to={'/'}>
+                            <IconButton
+                                size="medium"
+                                edge="start"
+                                color="primary"
+                                aria-label="menu"
+                                sx={{mr: 2}}
+                            >
+
+                                <AiOutlineHome/>
+                            </IconButton>
+                        </Link>
+                        <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
+                            {modelName ? `${modelName}` : 'Admin panel'}
+                        </Typography>
+                        <div>
+                            {
+                                modelName !== undefined && (
+                                    <Button
+                                        size="small"
+                                        aria-label="addButton"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        onClick={() => handleOpen()}
+                                        color="primary"
+                                        variant={'contained'}
+                                    >
+                                        <AddIcon/>
+                                    </Button>
+                                )
+                            }
+                        </div>
+                    </Toolbar>
+                </AppBar>
+            </Box>
+            {
+                success && (
+                    <Alert onClose={() => {setSuccess(false)}}>Успешно добавлено!</Alert>
+                )
+            }
+            {
+                error && (
+                    <Alert severity={'error'} onClose={() => {setError(false)}}>Произошла ошибка! Для более подробной информации проверьте консоль</Alert>
+                )
+            }
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -83,7 +130,7 @@ const Header: FC = () => {
                                         <TextField id="filled-basic" label={el.fieldName} variant="outlined"
                                                    size={'medium'} fullWidth
                                                    value={formData[el.fieldName] || ''}
-                                                   onChange={(e) => handleFieldChange(el.fieldName, e.target.value)} />
+                                                   onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}/>
                                     </div>
                                 );
                             })}

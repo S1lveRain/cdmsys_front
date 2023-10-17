@@ -6,17 +6,18 @@
     text-align: center;
     flex-direction: column;
     padding: 10px;
-    row-gap: 10px;
+    row-gap: 5px;
 }
 
 .itemWrapper {
     width: 80vw;
     display: flex;
+    background-color: white;
     flex-direction: row;
     justify-content: center;
-    border: 2px solid rgba(83, 82, 82, 0.7);
-    padding: 5px;
-    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 2px;
 }
 
 .itemContainer {

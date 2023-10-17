@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, {FC} from 'react';
 import Button from "@mui/material/Button";
 import {
     useDeleteModelObjectMutation,
@@ -10,9 +10,9 @@ import styles from './ModelObject.module.css'
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { TextField } from "@mui/material";
-import { useSelector, useDispatch } from 'react-redux';
-import { editFormData, clearFormData, selectFormData } from '../../app/slices/formDataSlice';
+import {Card, CardActionArea, CardActions, CardContent, IconButton, TextField} from "@mui/material";
+import {useSelector, useDispatch} from 'react-redux';
+import {editFormData, clearFormData, selectFormData} from '../../app/slices/formDataSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -20,6 +20,8 @@ interface ModelObjectI {
     modelName: string | undefined;
     id: string;
     name: string;
+    setError: any;
+    setSuccess: any;
 }
 
 const modalStyle = {
@@ -35,83 +37,109 @@ const modalStyle = {
     p: 4,
 };
 
-export const ModelObject: FC<ModelObjectI> = ({ modelName, id, name }) => {
-    const { data: object } = useGetOneModelObjectQuery({ modelName, id });
+export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, setSuccess}) => {
+    const {data: object} = useGetOneModelObjectQuery({modelName, id});
     const [deleteObject] = useDeleteModelObjectMutation();
     const [updateObject] = useUpdateModelObjectMutation();
     const handleDeleteObject = async (id: string, modelName: string) => {
         try {
-            await deleteObject({ modelName, id });
-        } catch (error) { }
+            await deleteObject({modelName, id});
+            setSuccess(true)
+        } catch (error) {
+            setError(true)
+        }
     };
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const { data: devModel, isLoading } = useGetDevModelQuery(modelName);
+    const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
 
     const dispatch = useDispatch();
     const fieldValues = useSelector(selectFormData);
 
     const handleFieldChange = (fieldName: string, value: string) => {
-        const data = { [fieldName]: value };
-        dispatch(editFormData({ data }));
+        const data = {[fieldName]: value};
+        dispatch(editFormData({data}));
     };
 
 
     const handleSave = () => {
-        updateObject({id: id, modelName: modelName, body: fieldValues});
-        dispatch(clearFormData());
-        handleClose();
+        try{
+            updateObject({id: id, modelName: modelName, body: fieldValues});
+            dispatch(clearFormData());
+            handleClose();
+            setSuccess(true)
+        } catch(error) {
+            setError(true)
+        }
+
     };
 
     return (
         <div className={styles.itemWrapper}>
-            <div className={styles.itemContainer}>
-                <div>
-                    <h4>{name}</h4>
-                </div>
-                <div className={styles.itemActions}>
-                    <Button variant={'contained'} color={'warning'} onClick={() => handleOpen()}>{<EditIcon />}</Button>
-                    <Button variant={'contained'} color={'error'} onClick={() => modelName && handleDeleteObject(id, modelName)}>{<DeleteIcon />}</Button>
-                </div>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={modalStyle}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Редактировать элемент
+            <Card sx={{maxWidth: 345, height: '100%'}}>
+                <CardActionArea>
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                            {name}
                         </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 15, padding: 10 }}>
-                                {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
-                                    if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
-                                        return null;
-                                    }
-                                    return (
-                                        <div key={el.fieldName}>
-                                            <TextField
-                                                id={el.fieldName}
-                                                label={el.fieldName}
-                                                variant="outlined"
-                                                defaultValue={object?.[el.fieldName] || ''}
-                                                onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                                size={'medium'}
-                                                fullWidth
-                                            />
-                                        </div>
-                                    );
-                                })}
-                                <Button variant={'outlined'} size={'large'} onClick={handleSave}>Сохранить</Button>
-                            </div>
+                        <Typography variant="subtitle1" color="text.secondary">
+                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
+                                return (
+                                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                                        {`${el.fieldName}: ${object?.[el.fieldName]}`}
+                                    </div>
+                                )
+                            })}
                         </Typography>
-                    </Box>
-                </Modal>
-            </div>
+                    </CardContent>
+                    <CardActions disableSpacing>
+                        <IconButton aria-label="edit" color={'primary'} onClick={() => handleOpen()}>
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton aria-label="delete" color={'error'} onClick={() => modelName && handleDeleteObject(id, modelName)}>
+                            <DeleteIcon/>
+                        </IconButton>
+                    </CardActions>
+                </CardActionArea>
+            </Card>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Редактировать элемент
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{mt: 2}}>
+                        <div style={{display: 'flex', flexDirection: 'column', gap: 15, padding: 10}}>
+                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
+                                if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
+                                    return null;
+                                }
+                                return (
+                                    <div key={el.fieldName}>
+                                        <TextField
+                                            id={el.fieldName}
+                                            label={el.fieldName}
+                                            variant="outlined"
+                                            defaultValue={object?.[el.fieldName] || ''}
+                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
+                                            size={'medium'}
+                                            fullWidth
+                                        />
+                                    </div>
+                                );
+                            })}
+                            <Button variant={'outlined'} size={'large'} onClick={handleSave}>Сохранить</Button>
+                        </div>
+                    </Typography>
+                </Box>
+            </Modal>
         </div>
     );
 };
