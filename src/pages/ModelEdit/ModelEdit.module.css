@@ -11,3 +11,9 @@
     flex-wrap: wrap;
     display: flex;
 }
+
+.searchBarContainer {
+    padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
