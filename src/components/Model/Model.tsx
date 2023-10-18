@@ -5,17 +5,18 @@ import styles from './Model.module.css'
 
 interface ItemI {
     name: string,
-    count?: string
+    count?: string,
+    label: string,
 }
 
-export const Model: FC<ItemI> = ({name, count}) => {
+export const Model: FC<ItemI> = ({name, count, label}) => {
     return (
         <Paper elevation={3}>
             <Link to={`/model/${name}`} className={styles.itemName}>
                 <div className={styles.itemWrapper}>
                     <div className={styles.itemContainer}>
                         <div>
-                            <h4>{name}</h4>
+                            <h4>{label}</h4>
 
                         </div>
                         <div className={styles.itemCount}>

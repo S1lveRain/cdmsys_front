@@ -14,7 +14,7 @@ export const Home = () => {
                     <>
                         <Stack spacing={2}>
                             <div className={styles.homeWrapper}>
-                                <Model name={el.modelName} count={el.count}/>
+                                <Model label={el.modelLabel} name={el.modelName} count={el.count}/>
                             </div>
                         </Stack>
                     </>
