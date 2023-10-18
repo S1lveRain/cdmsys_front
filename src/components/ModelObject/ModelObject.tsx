@@ -10,7 +10,12 @@ import styles from './ModelObject.module.css'
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Card, CardActionArea, CardActions, CardContent, IconButton, TextField} from "@mui/material";
+import {
+    IconButton,
+    TableCell,
+    TableRow,
+    TextField
+} from "@mui/material";
 import {useSelector, useDispatch} from 'react-redux';
 import {editFormData, clearFormData, selectFormData} from '../../app/slices/formDataSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -78,33 +83,27 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
     };
 
     return (
-        <div className={styles.itemWrapper}>
-            <Card sx={{maxWidth: 345, height: '100%'}}>
-                <CardActionArea>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {name}
-                        </Typography>
-                        <Typography variant="subtitle1" color="text.secondary">
-                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
-                                return (
-                                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                                        {`${el.fieldName}: ${object?.[el.fieldName]}`}
-                                    </div>
-                                )
-                            })}
-                        </Typography>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                        <IconButton aria-label="edit" color={'primary'} onClick={() => handleOpen()}>
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton aria-label="delete" color={'error'} onClick={() => modelName && handleDeleteObject(id, modelName)}>
-                            <DeleteIcon/>
-                        </IconButton>
-                    </CardActions>
-                </CardActionArea>
-            </Card>
+        <>
+            <TableRow>
+                {modelName &&
+                    !isLoading &&
+                    devModel.fields &&
+                    devModel.fields.map((el: any) => {
+                        return (
+                            <TableCell key={el.fieldName}>
+                                {object?.[el.fieldName]}
+                            </TableCell>
+                        );
+                    })}
+                <TableCell>
+                    <IconButton aria-label="edit" color="primary" onClick={() => handleOpen()}>
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton aria-label="delete" color="error" onClick={() => modelName && handleDeleteObject(id, modelName)}>
+                        <DeleteIcon />
+                    </IconButton>
+                </TableCell>
+            </TableRow>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -140,6 +139,6 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                     </Typography>
                 </Box>
             </Modal>
-        </div>
+        </>
     );
 };
