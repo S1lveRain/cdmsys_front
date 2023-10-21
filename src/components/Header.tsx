@@ -13,6 +13,7 @@ import {clearFormData, selectFormData, setFormData} from "../app/slices/formData
 
 interface Field {
     fieldName: string;
+    label: string;
 }
 
 const modalStyle = {
@@ -132,7 +133,7 @@ const Header: FC = () => {
                                 }
                                 return (
                                     <div key={el.fieldName}>
-                                        <TextField id="filled-basic" label={el.fieldName} variant="outlined"
+                                        <TextField id="filled-basic" label={el.label ? el.label : el.fieldName} variant="outlined"
                                                    size={'medium'} fullWidth
                                                    value={formData[el.fieldName] || ''}
                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}/>

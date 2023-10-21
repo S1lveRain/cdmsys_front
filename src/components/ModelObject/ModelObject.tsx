@@ -124,7 +124,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     <div key={el.fieldName}>
                                         <TextField
                                             id={el.fieldName}
-                                            label={el.fieldName}
+                                            label={el.label ? el.label : el.fieldName}
                                             variant="outlined"
                                             defaultValue={object?.[el.fieldName] || ''}
                                             onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}

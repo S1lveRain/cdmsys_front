@@ -87,7 +87,7 @@ export const ModelEdit = () => {
                             <TableRow>
                                 {!isLoading && devModel.fields &&
                                     devModel.fields.map((el: any) => (
-                                        <TableCell key={el.fieldName}>{el.fieldName}</TableCell>
+                                        <TableCell key={el.fieldName}>{el.label ? el.label : el.fieldName}</TableCell>
                                     ))}
                                 <TableCell>Actions</TableCell>
                             </TableRow>
