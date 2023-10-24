@@ -21,6 +21,7 @@ import {editFormData, clearFormData, selectFormData} from '../../app/slices/form
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InputMask from "react-input-mask";
+import {RootState} from "../../app/Store";
 
 interface ModelObjectI {
     modelName: string | undefined;
@@ -30,20 +31,8 @@ interface ModelObjectI {
     setSuccess: any;
 }
 
-const modalStyle = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: '#fff',
-    border: '2px solid rgba(188, 188, 188, 0.7)',
-    boxShadow: 24,
-    borderRadius: 2,
-    p: 4,
-};
-
 export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, setSuccess}) => {
+    const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
     const {data: object} = useGetOneModelObjectQuery({modelName, id});
     const [deleteObject, {error}] = useDeleteModelObjectMutation();
     const [updateObject] = useUpdateModelObjectMutation();
@@ -95,6 +84,19 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
         dispatch(clearFormData());
         handleClose();
 
+    };
+
+    const modalStyle = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: isDarkMode ? '#121212' : '#fff',
+        border: isDarkMode ? '2px solid rgba(255, 255, 255, 0.12)' : '2px solid rgba(0, 0, 0, 0.12)',
+        boxShadow: 24,
+        borderRadius: 2,
+        p: 4,
     };
 
     return (

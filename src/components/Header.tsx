@@ -6,11 +6,15 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Alert, AppBar, IconButton, TextField, Toolbar} from "@mui/material";
+import {Alert, AppBar, IconButton, Switch, TextField, Toolbar} from "@mui/material";
 import {useAddModelObjectMutation, useGetDevModelQuery} from "../app/api/ModelsApi";
 import {useDispatch, useSelector} from 'react-redux';
 import {clearFormData, selectFormData, setFormData} from "../app/slices/formDataSlice";
 import InputMask from 'react-input-mask';
+import {RootState} from '../app/Store';
+import {toggleTheme} from "../app/slices/themeSlice";
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 
 interface Field {
@@ -19,22 +23,10 @@ interface Field {
     type: string;
 }
 
-const modalStyle = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: '#fff',
-    border: '2px solid rgba(188, 188, 188, 0.7)',
-    boxShadow: 24,
-    borderRadius: 2,
-    p: 4,
-};
-
 const Header: FC = () => {
 
     const {modelName} = useParams();
+    const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
     const formData = useSelector(selectFormData);
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
@@ -42,6 +34,10 @@ const Header: FC = () => {
     const [error, setError] = React.useState(false)
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleThemeToggle = () => {
+        dispatch(toggleTheme());
+    };
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
     const [addObject] = useAddModelObjectMutation()
@@ -68,6 +64,19 @@ const Header: FC = () => {
         handleClose();
     };
 
+    const modalStyle = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: isDarkMode ? '#121212' : '#fff',
+        border: isDarkMode ? '2px solid rgba(255, 255, 255, 0.12)' : '2px solid rgba(0, 0, 0, 0.12)',
+        boxShadow: 24,
+        borderRadius: 2,
+        p: 4,
+    };
+
     return (
         <>
             <Box sx={{flexGrow: 1}}>
@@ -84,7 +93,18 @@ const Header: FC = () => {
 
                                 <AiOutlineHome/>
                             </IconButton>
+
                         </Link>
+                        <IconButton onClick={handleThemeToggle}
+                                    name="themeSwitch"
+                                    color="primary"
+                                    size={'medium'}
+                                    edge={'start'}
+                                    aria-label={'switchTheme'}
+                                    sx={{mr: 2}}
+                        >
+                            {isDarkMode ? (<DarkModeIcon/>) : (<LightModeIcon />)}
+                        </IconButton>
                         <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
                             {modelName ? `${modelName}` : 'Admin panel'}
                         </Typography>
