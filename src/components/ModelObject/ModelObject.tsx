@@ -20,6 +20,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {editFormData, clearFormData, selectFormData} from '../../app/slices/formDataSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import InputMask from "react-input-mask";
 
 interface ModelObjectI {
     modelName: string | undefined;
@@ -143,15 +144,30 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                 }
                                 return (
                                     <div key={el.fieldName}>
-                                        <TextField
-                                            id={el.fieldName}
-                                            label={el.label ? el.label : el.fieldName}
-                                            variant="outlined"
-                                            defaultValue={object?.[el.fieldName] || ''}
-                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                            size={'medium'}
-                                            fullWidth
-                                        />
+                                        {
+                                            el.type === 'DATE' ? (
+                                                <InputMask mask="9999-99-99" maskChar="_" defaultValue={object?.[el.fieldName] || ''}
+                                                           onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}>
+                                                    <TextField
+                                                        id="filled-basic"
+                                                        label={el.label ? el.label : el.fieldName}
+                                                        variant="outlined"
+                                                        size={'medium'}
+                                                        fullWidth
+                                                    />
+                                                </InputMask>
+                                            ) : (
+                                                <TextField
+                                                    id={el.fieldName}
+                                                    label={el.label ? el.label : el.fieldName}
+                                                    variant="outlined"
+                                                    defaultValue={object?.[el.fieldName] || ''}
+                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
+                                                    size={'medium'}
+                                                    fullWidth
+                                                />
+                                            )
+                                        }
                                     </div>
                                 );
                             })}
