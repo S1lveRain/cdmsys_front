@@ -13,7 +13,6 @@ import {clearFormData, selectFormData, setFormData} from "../app/slices/formData
 import InputMask from 'react-input-mask';
 
 
-
 interface Field {
     fieldName: string;
     label: string;
@@ -59,12 +58,12 @@ const Header: FC = () => {
     };
 
     const handleAddButtonClick = async () => {
-        try {
-            await addObject({modelName: modelName, body: formData})
-            setSuccess(true)
-        } catch (error) {
-            setError(true)
-        }
+        await addObject({modelName: modelName, body: formData})
+            .unwrap()
+            .then(fulfilled => {
+                setSuccess(true)
+            })
+            .catch(rejected => setError(true))
         dispatch(clearFormData());
         handleClose();
     };
@@ -111,12 +110,16 @@ const Header: FC = () => {
             </Box>
             {
                 success && (
-                    <Alert onClose={() => {setSuccess(false)}}>Успешно добавлено!</Alert>
+                    <Alert onClose={() => {
+                        setSuccess(false)
+                    }}>Успешно добавлено!</Alert>
                 )
             }
             {
                 error && (
-                    <Alert severity={'error'} onClose={() => {setError(false)}}>Произошла ошибка! Для более подробной информации проверьте консоль</Alert>
+                    <Alert severity={'error'} onClose={() => {
+                        setError(false)
+                    }}>Произошла ошибка! Для более подробной информации проверьте консоль</Alert>
                 )
             }
             <Modal
@@ -139,18 +142,20 @@ const Header: FC = () => {
                                     <div key={el.fieldName}>
                                         {
                                             el.type === 'DATE' ? (
-                                                <InputMask mask="9999-99-99" maskChar="_" value={formData[el.fieldName] || ''}
+                                                <InputMask mask="9999-99-99" maskChar="_"
+                                                           value={formData[el.fieldName] || ''}
                                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}>
-                                                        <TextField
-                                                            id="filled-basic"
-                                                            label={el.label ? el.label : el.fieldName}
-                                                            variant="outlined"
-                                                            size={'medium'}
-                                                            fullWidth
-                                                        />
+                                                    <TextField
+                                                        id="filled-basic"
+                                                        label={el.label ? el.label : el.fieldName}
+                                                        variant="outlined"
+                                                        size={'medium'}
+                                                        fullWidth
+                                                    />
                                                 </InputMask>
                                             ) : (
-                                                <TextField id="filled-basic" label={el.label ? el.label : el.fieldName} variant="outlined"
+                                                <TextField id="filled-basic" label={el.label ? el.label : el.fieldName}
+                                                           variant="outlined"
                                                            size={'medium'} fullWidth
                                                            value={formData[el.fieldName] || ''}
                                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}/>

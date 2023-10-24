@@ -45,15 +45,14 @@ const modalStyle = {
 
 export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, setSuccess}) => {
     const {data: object} = useGetOneModelObjectQuery({modelName, id});
-    const [deleteObject] = useDeleteModelObjectMutation();
+    const [deleteObject, {error}] = useDeleteModelObjectMutation();
     const [updateObject] = useUpdateModelObjectMutation();
     const handleDeleteObject = async (id: string, modelName: string) => {
         try {
             await deleteObject({modelName, id});
-            setSuccess(true)
-        } catch (error) {
-            setError(true)
+        } catch (err) {
         }
+        error ? setError(true) : setSuccess(true)
     };
 
     const [open, setOpen] = React.useState(false);
@@ -86,18 +85,15 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
         }
     }
 
-
-
-
     const handleSave = () => {
-        try{
-            updateObject({id: id, modelName: modelName, body: fieldValues});
-            dispatch(clearFormData());
-            handleClose();
-            setSuccess(true)
-        } catch(error) {
-            setError(true)
-        }
+        updateObject({id: id, modelName: modelName, body: fieldValues})
+            .unwrap()
+            .then(fulfilled => {
+                setSuccess(true)
+            })
+            .catch(rejected => setError(true))
+        dispatch(clearFormData());
+        handleClose();
 
     };
 
@@ -119,10 +115,11 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                     })}
                 <TableCell>
                     <IconButton aria-label="edit" color="primary" onClick={() => handleOpen()}>
-                        <EditIcon />
+                        <EditIcon/>
                     </IconButton>
-                    <IconButton aria-label="delete" color="error" onClick={() => modelName && handleDeleteObject(id, modelName)}>
-                        <DeleteIcon />
+                    <IconButton aria-label="delete" color="error"
+                                onClick={() => modelName && handleDeleteObject(id, modelName)}>
+                        <DeleteIcon/>
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -146,7 +143,8 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     <div key={el.fieldName}>
                                         {
                                             el.type === 'DATE' ? (
-                                                <InputMask mask="9999-99-99" maskChar="_" defaultValue={object?.[el.fieldName] || ''}
+                                                <InputMask mask="9999-99-99" maskChar="_"
+                                                           defaultValue={object?.[el.fieldName] || ''}
                                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}>
                                                     <TextField
                                                         id="filled-basic"
