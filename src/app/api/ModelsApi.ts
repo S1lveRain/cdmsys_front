@@ -3,19 +3,19 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/dist/query/react";
 export const modelsApi = createApi({
     reducerPath: "modelsAPI",
     baseQuery: fetchBaseQuery({baseUrl: "http://localhost:8000"}),
-    tagTypes: ["Model"],
+    tagTypes: ["Models", "Model", "Objects", "Object"],
     endpoints: (build) => ({
         getModels: build.query({
             query: () => ({
                 url: '/dev/models',
             }),
-            providesTags: ['Model', {type: 'Model', id: 'LIST'}],
+            providesTags: ['Models', {type: 'Models', id: 'LIST'}],
         }),
         getModel: build.query({
             query: (modelName) => ({
                 url: `${modelName}`
             }),
-            providesTags: ['Model', {type: 'Model', id: 'LIST'}],
+            providesTags: ['Objects', {type: 'Objects', id: 'LIST'}],
         }),
         getDevModel: build.query({
             query: (modelName) => ({
@@ -27,14 +27,14 @@ export const modelsApi = createApi({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`
             }),
-            providesTags: ['Model', {type: 'Model', id: 'LIST'}]
+            providesTags: ['Object', {type: 'Object', id: 'LIST'}]
         }),
         deleteModelObject: build.mutation({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: [{type: 'Model', id: 'LIST'}],
+            invalidatesTags: [{type: 'Objects', id: 'LIST'}],
         }),
         addModelObject: build.mutation({
             query: ({ modelName, body }) => ({
@@ -43,7 +43,7 @@ export const modelsApi = createApi({
                 body: body,
             }),
 
-            invalidatesTags: ["Model"],
+            invalidatesTags: [{type: 'Objects', id: 'LIST'}],
         }),
         updateModelObject: build.mutation({
             query: ({modelName, body, id}) => ({
@@ -51,7 +51,7 @@ export const modelsApi = createApi({
                 method: "PUT",
                 body: body
             }),
-            invalidatesTags: ["Model"]
+            invalidatesTags: [{type: 'Object', id: 'LIST'}]
         }),
     }),
 });
