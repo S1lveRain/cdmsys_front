@@ -87,7 +87,7 @@ const Header: FC = () => {
                             {isDarkMode ? (<DarkModeIcon/>) : (<LightModeIcon />)}
                         </IconButton>
                         <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
-                            {modelName ? `${modelName}` : 'Admin panel'}
+                            { modelName && devModel ? devModel.modelLabel ? `${devModel.modelLabel}` : `${devModel.modelName}` : 'Панель администратора'}
                         </Typography>
                         <div>
                             {
