@@ -1,5 +1,4 @@
 import React, {FC} from 'react';
-import Button from "@mui/material/Button";
 import {
     useDeleteModelObjectMutation,
     useGetDevModelQuery,
@@ -7,46 +6,49 @@ import {
     useUpdateModelObjectMutation
 } from "../../app/api/ModelsApi";
 import styles from './ModelObject.module.css'
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import {
     IconButton,
     TableCell,
     TableRow,
-    TextField
 } from "@mui/material";
 import {useSelector, useDispatch} from 'react-redux';
 import {editFormData, clearFormData, selectFormData} from '../../app/slices/formDataSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import InputMask from "react-input-mask";
-import {RootState} from "../../app/Store";
+import { CustomModal } from '../CustomModal/CustomModal';
 
 interface ModelObjectI {
     modelName: string | undefined;
     id: string;
     name: string;
-    setError: any;
-    setSuccess: any;
+    setError: React.Dispatch<React.SetStateAction<boolean>>;
+    setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, setSuccess}) => {
-    const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
+
+    const [openEditModal, setOpenEditModal] = React.useState(false);
+    const handleOpenEditModal = () => setOpenEditModal(true);
+    const handleCloseEditModal = () => setOpenEditModal(false);
+
     const {data: object} = useGetOneModelObjectQuery({modelName, id});
-    const [deleteObject, {error}] = useDeleteModelObjectMutation();
+    const [deleteObject] = useDeleteModelObjectMutation();
     const [updateObject] = useUpdateModelObjectMutation();
     const handleDeleteObject = async (id: string, modelName: string) => {
         try {
-            await deleteObject({modelName, id});
-        } catch (err) {
+            await deleteObject({ modelName, id }).unwrap();
+            setSuccess(true);
+        } catch (error: any) {
+            if (error.originalStatus === 200) {
+                setSuccess(true);
+            } else {
+                setError(true);
+            }
         }
-        error ? setError(true) : setSuccess(true)
     };
 
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+
+
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
 
@@ -82,22 +84,11 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
             })
             .catch(rejected => setError(true))
         dispatch(clearFormData());
-        handleClose();
+        handleCloseEditModal();
 
     };
 
-    const modalStyle = {
-        position: 'absolute' as 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: isDarkMode ? '#121212' : '#fff',
-        border: isDarkMode ? '2px solid rgba(255, 255, 255, 0.12)' : '2px solid rgba(0, 0, 0, 0.12)',
-        boxShadow: 24,
-        borderRadius: 2,
-        p: 4,
-    };
+
 
     return (
         <>
@@ -116,7 +107,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                         );
                     })}
                 <TableCell>
-                    <IconButton aria-label="edit" color="primary" onClick={() => handleOpen()}>
+                    <IconButton aria-label="edit" color="primary" onClick={() => handleOpenEditModal()}>
                         <EditIcon/>
                     </IconButton>
                     <IconButton aria-label="delete" color="error"
@@ -125,57 +116,18 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                     </IconButton>
                 </TableCell>
             </TableRow>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={modalStyle}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Редактировать элемент
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{mt: 2}}>
-                        <div style={{display: 'flex', flexDirection: 'column', gap: 15, padding: 10}}>
-                            {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
-                                if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
-                                    return null;
-                                }
-                                return (
-                                    <div key={el.fieldName}>
-                                        {
-                                            el.type === 'DATE' ? (
-                                                <InputMask mask="9999-99-99" maskChar="_"
-                                                           defaultValue={object?.[el.fieldName] || ''}
-                                                           onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}>
-                                                    <TextField
-                                                        id="filled-basic"
-                                                        label={el.label ? el.label : el.fieldName}
-                                                        variant="outlined"
-                                                        size={'medium'}
-                                                        fullWidth
-                                                    />
-                                                </InputMask>
-                                            ) : (
-                                                <TextField
-                                                    id={el.fieldName}
-                                                    label={el.label ? el.label : el.fieldName}
-                                                    variant="outlined"
-                                                    defaultValue={object?.[el.fieldName] || ''}
-                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                                    size={'medium'}
-                                                    fullWidth
-                                                />
-                                            )
-                                        }
-                                    </div>
-                                );
-                            })}
-                            <Button variant={'outlined'} size={'large'} onClick={handleSave}>Сохранить</Button>
-                        </div>
-                    </Typography>
-                </Box>
-            </Modal>
+            {
+               !isLoading && devModel && (
+                    <CustomModal
+                        open={openEditModal}
+                        onClose={handleCloseEditModal}
+                        object={object}
+                        devModelFields={devModel.fields}
+                        handleFieldChange={handleFieldChange}
+                        handleSave={handleSave}
+                    />
+                )
+            }
         </>
     );
 };

@@ -1,7 +1,7 @@
 import {createBrowserRouter} from "react-router-dom";
 import { Home } from "../pages/Home/Home";
 import Layout from "../pages/Layout";
-import {ModelEdit} from "../pages/ModelEdit/ModelEdit";
+import {ModelObjectsList} from "../pages/ModelObjectsList/ModelObjectsList";
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/model/:modelName',
-                element: <ModelEdit />
+                element: <ModelObjectsList />
             }
         ]
     },

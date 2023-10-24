@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import {useGetDevModelQuery, useGetModelQuery} from "../../app/api/ModelsApi";
-import styles from './ModelEdit.module.css'
+import styles from './ModelObjectsList.module.css'
 import {ModelObject} from "../../components/ModelObject/ModelObject";
 import {
     Alert,
@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 
-export const ModelEdit = () => {
+export const ModelObjectsList = () => {
     const {modelName} = useParams();
 
     const {data} = useGetModelQuery(modelName);
@@ -85,7 +85,7 @@ export const ModelEdit = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                {!isLoading && devModel.fields &&
+                                {!isLoading && devModel &&
                                     devModel.fields.map((el: any) => (
                                         <TableCell key={el.fieldName}>
                                             {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}

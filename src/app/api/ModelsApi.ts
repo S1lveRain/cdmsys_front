@@ -9,32 +9,31 @@ export const modelsApi = createApi({
             query: () => ({
                 url: '/dev/models',
             }),
-            providesTags: (result) => ["Model"],
+            providesTags: ['Model', {type: 'Model', id: 'LIST'}],
         }),
         getModel: build.query({
             query: (modelName) => ({
                 url: `${modelName}`
             }),
-            providesTags: (result) => ["Model"],
+            providesTags: ['Model', {type: 'Model', id: 'LIST'}],
         }),
         getDevModel: build.query({
             query: (modelName) => ({
                 url: `/dev/models/${modelName}/`
             }),
-            providesTags: (result) => ["Model"],
+            providesTags: ['Model', {type: 'Model', id: 'LIST'}],
         }),
         getOneModelObject: build.query({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`
             }),
-           providesTags: (result) => ["Model"]
         }),
         deleteModelObject: build.mutation({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Model"],
+            invalidatesTags: [{type: 'Model', id: 'LIST'}],
         }),
         addModelObject: build.mutation({
             query: ({ modelName, body }) => ({
