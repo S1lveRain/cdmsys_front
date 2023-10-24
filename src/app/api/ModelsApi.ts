@@ -27,6 +27,7 @@ export const modelsApi = createApi({
             query: ({modelName, id}) => ({
                 url: `/${modelName}/${id}`
             }),
+            providesTags: ['Model', {type: 'Model', id: 'LIST'}]
         }),
         deleteModelObject: build.mutation({
             query: ({modelName, id}) => ({
