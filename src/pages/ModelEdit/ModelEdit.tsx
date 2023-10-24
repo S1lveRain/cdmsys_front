@@ -87,11 +87,14 @@ export const ModelEdit = () => {
                             <TableRow>
                                 {!isLoading && devModel.fields &&
                                     devModel.fields.map((el: any) => (
-                                        <TableCell key={el.fieldName}>{el.label ? el.label : el.fieldName}</TableCell>
+                                        <TableCell key={el.fieldName}>
+                                            {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
+                                        </TableCell>
                                     ))}
-                                <TableCell>Actions</TableCell>
+                                <TableCell>Действия</TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {filteredData.map((el: any) => (
                                 <ModelObject

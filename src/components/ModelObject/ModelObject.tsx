@@ -69,6 +69,24 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
         dispatch(editFormData({data}));
     };
 
+    function formatDateTime(dateString: string, fieldName: string) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+
+        if (fieldName === 'createdAt' || fieldName === 'updatedAt') {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+        } else {
+            return `${day}.${month}.${year}`;
+        }
+    }
+
+
+
 
     const handleSave = () => {
         try{
@@ -91,7 +109,10 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                     devModel.fields.map((el: any) => {
                         return (
                             <TableCell key={el.fieldName}>
-                                {object?.[el.fieldName]}
+                                {el.type === 'DATE' && object && object[el.fieldName]
+                                    ? formatDateTime(object[el.fieldName], el.fieldName)
+                                    : object?.[el.fieldName] || ''}
+
                             </TableCell>
                         );
                     })}
