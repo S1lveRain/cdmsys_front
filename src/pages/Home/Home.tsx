@@ -20,7 +20,7 @@ export const Home = () => {
                         <Stack spacing={2}>
                             {
                                 arr.map(() => {
-                                    return(<Skeleton style={{height: 100, width: '80vw'}}/>)
+                                    return(<Skeleton style={{height: 100, width: '80vw'}} variant={'rectangular'}/>)
                                 })
                             }
                         </Stack>
