@@ -88,26 +88,40 @@ export const ModelObjectsList = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                {!isLoading && devModel &&
-                                    devModel.fields.map((el: any) => (
-                                        <TableCell key={el.fieldName}>
-                                            {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
-                                        </TableCell>
-                                    ))}
-                                <TableCell>Действия</TableCell>
+                                {
+                                    isLoading ? (
+                                        arr.map(() => (
+                                            <TableCell>
+                                                <Skeleton animation="wave" variant="text"/>
+                                            </TableCell>
+                                        ))
+                                    ) : (
+                                        <>
+                                            {devModel && devModel.fields.map((el: any) => (
+                                                <TableCell key={el.fieldName}>
+                                                    {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
+                                                </TableCell>
+                                            ))}
+                                            <TableCell> Действия </TableCell>
+                                        </>
+                                    )
+                                }
+
                             </TableRow>
                         </TableHead>
 
                         <TableBody>
                             {
                                 isLoading ? (
-                                    <TableRow>
-                                        {arr.map(() => (
-                                            <TableCell component="th" scope="row">
-                                                <Skeleton animation="wave" variant="text"/>
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
+                                    arr.map(() => (
+                                        <TableRow>
+                                            {arr.map(() => (
+                                                <TableCell component="th" scope="row">
+                                                    <Skeleton animation="wave" variant="text"/>
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
                                 ) : (
                                     filteredData.map((el: any) => (
                                         <ModelObject
@@ -127,5 +141,6 @@ export const ModelObjectsList = () => {
             </div>
 
         </>
-    );
+    )
+        ;
 };
