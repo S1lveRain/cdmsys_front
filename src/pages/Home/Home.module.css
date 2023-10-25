@@ -12,3 +12,13 @@
     justify-content: center;
     text-align: center;
 }
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.skeletonWrapper {
+    height: 100px;
+    width: 80vw;
+}
