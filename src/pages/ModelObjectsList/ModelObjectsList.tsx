@@ -13,7 +13,8 @@ import {
     TableCell,
     TableBody,
     Table,
-    Paper
+    Paper,
+    Skeleton
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -46,6 +47,8 @@ export const ModelObjectsList = () => {
             return modelNameToSearch.toLowerCase().includes(searchTerm.toLowerCase());
         })
         : [];
+
+    let arr = Array.from({length: 5}, (_, idx) => `${++idx}`)
 
     return (
         <>
@@ -96,16 +99,28 @@ export const ModelObjectsList = () => {
                         </TableHead>
 
                         <TableBody>
-                            {filteredData.map((el: any) => (
-                                <ModelObject
-                                    key={el.id}
-                                    modelName={modelName}
-                                    id={el.id}
-                                    name={el.name === undefined ? el.title : el.name}
-                                    setError={setError}
-                                    setSuccess={setSuccess}
-                                />
-                            ))}
+                            {
+                                isLoading ? (
+                                    <TableRow>
+                                        {arr.map(() => (
+                                            <TableCell component="th" scope="row">
+                                                <Skeleton animation="wave" variant="text"/>
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ) : (
+                                    filteredData.map((el: any) => (
+                                        <ModelObject
+                                            key={el.id}
+                                            modelName={modelName}
+                                            id={el.id}
+                                            name={el.name === undefined ? el.title : el.name}
+                                            setError={setError}
+                                            setSuccess={setSuccess}
+                                        />
+                                    ))
+                                )
+                            }
                         </TableBody>
                     </Table>
                 </Paper>
