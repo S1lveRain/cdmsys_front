@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, {FC, useState} from 'react';
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -18,13 +18,13 @@ interface CustomModalI {
 }
 
 export const CustomModal: FC<CustomModalI> = ({
-                                           open,
-                                           onClose,
-                                           object,
-                                           devModelFields,
-                                           handleFieldChange,
-                                           handleSave,
-                                       }) => {
+                                                  open,
+                                                  onClose,
+                                                  object,
+                                                  devModelFields,
+                                                  handleFieldChange,
+                                                  handleSave,
+                                              }) => {
 
 
     const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
@@ -54,8 +54,8 @@ export const CustomModal: FC<CustomModalI> = ({
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     Редактировать элемент
                 </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 15, padding: 10 }}>
+                <Typography id="modal-modal-description" sx={{mt: 2}}>
+                    <div style={{display: 'flex', flexDirection: 'column', gap: 15, padding: 10}}>
                         {devModelFields && devModelFields.map((el: any) => {
                             if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
                                 return null;

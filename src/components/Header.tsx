@@ -13,16 +13,20 @@ import {RootState} from '../app/Store';
 import {toggleTheme} from "../app/slices/themeSlice";
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { CustomModal } from './CustomModal/CustomModal';
+import {CustomModal} from './CustomModal/CustomModal';
 
-const Header: FC = () => {
+export const Header: FC = () => {
 
+    const dispatch = useDispatch();
     const {modelName} = useParams();
     const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
     const formData = useSelector(selectFormData);
-    const dispatch = useDispatch();
+
     const [success, setSuccess] = React.useState(false)
     const [error, setError] = React.useState(false)
+
+    const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
+    const [addObject] = useAddModelObjectMutation();
 
     const [openAddModal, setOpenAddModal] = React.useState(false);
     const handleOpenAddModal = () => setOpenAddModal(true);
@@ -31,16 +35,6 @@ const Header: FC = () => {
     const handleThemeToggle = () => {
         dispatch(toggleTheme());
     };
-
-    const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
-    const [addObject] = useAddModelObjectMutation()
-
-    useEffect(() => {
-        setTimeout(() => {
-            setSuccess(false);
-            setError(false)
-        }, 5000);
-    }, [success, error]);
 
     const handleFieldChange = (fieldName: string, value: string) => {
         dispatch(setFormData({[fieldName]: value}));
@@ -57,6 +51,13 @@ const Header: FC = () => {
         handleCloseAddModal();
     };
 
+    useEffect(() => {
+        setTimeout(() => {
+            setSuccess(false);
+            setError(false)
+        }, 5000);
+    }, [success, error]);
+
 
     return (
         <>
@@ -71,10 +72,8 @@ const Header: FC = () => {
                                 aria-label="menu"
                                 sx={{mr: 2}}
                             >
-
                                 <AiOutlineHome/>
                             </IconButton>
-
                         </Link>
                         <IconButton onClick={handleThemeToggle}
                                     name="themeSwitch"
@@ -84,10 +83,10 @@ const Header: FC = () => {
                                     aria-label={'switchTheme'}
                                     sx={{mr: 2}}
                         >
-                            {isDarkMode ? (<DarkModeIcon/>) : (<LightModeIcon />)}
+                            {isDarkMode ? (<DarkModeIcon/>) : (<LightModeIcon/>)}
                         </IconButton>
                         <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
-                            { modelName && devModel ? devModel.modelLabel ? `${devModel.modelLabel}` : `${devModel.modelName}` : 'Панель администратора'}
+                            {modelName && devModel ? devModel.modelLabel ? `${devModel.modelLabel}` : `${devModel.modelName}` : 'Панель администратора'}
                         </Typography>
                         <div>
                             {
@@ -136,8 +135,5 @@ const Header: FC = () => {
                 )
             }
         </>
-
     );
 };
-
-export default Header;

@@ -37,7 +37,7 @@ export const modelsApi = createApi({
             invalidatesTags: [{type: 'Objects', id: 'LIST'}],
         }),
         addModelObject: build.mutation({
-            query: ({ modelName, body }) => ({
+            query: ({modelName, body}) => ({
                 url: `/${modelName}/`,
                 method: "POST",
                 body: body,
@@ -56,4 +56,12 @@ export const modelsApi = createApi({
     }),
 });
 
-export const { useGetModelsQuery, useGetModelQuery, useGetDevModelQuery, useGetOneModelObjectQuery, useDeleteModelObjectMutation, useAddModelObjectMutation, useUpdateModelObjectMutation } = modelsApi;
+export const {
+    useGetModelsQuery,
+    useGetModelQuery,
+    useGetDevModelQuery,
+    useGetOneModelObjectQuery,
+    useDeleteModelObjectMutation,
+    useAddModelObjectMutation,
+    useUpdateModelObjectMutation
+} = modelsApi;

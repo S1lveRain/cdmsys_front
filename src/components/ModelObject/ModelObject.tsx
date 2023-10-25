@@ -15,7 +15,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {editFormData, clearFormData, selectFormData} from '../../app/slices/formDataSlice';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { CustomModal } from '../CustomModal/CustomModal';
+import {CustomModal} from '../CustomModal/CustomModal';
 
 interface ModelObjectI {
     modelName: string | undefined;
@@ -36,7 +36,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
     const [updateObject] = useUpdateModelObjectMutation();
     const handleDeleteObject = async (id: string, modelName: string) => {
         try {
-            await deleteObject({ modelName, id }).unwrap();
+            await deleteObject({modelName, id}).unwrap();
             setSuccess(true);
         } catch (error: any) {
             if (error.originalStatus === 200) {
@@ -46,8 +46,6 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
             }
         }
     };
-
-
 
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
@@ -89,7 +87,6 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
     };
 
 
-
     return (
         <>
             <TableRow>
@@ -117,7 +114,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                 </TableCell>
             </TableRow>
             {
-               !isLoading && devModel && (
+                !isLoading && devModel && (
                     <CustomModal
                         open={openEditModal}
                         onClose={handleCloseEditModal}

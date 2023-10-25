@@ -1,5 +1,5 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { modelsApi } from "./api/ModelsApi";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
+import {modelsApi} from "./api/ModelsApi";
 import formDataReducer from './slices/formDataSlice';
 import themeReducer from './slices/themeSlice';
 
