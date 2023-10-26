@@ -9,17 +9,13 @@ import {Alert, AppBar, IconButton, Toolbar} from "@mui/material";
 import {useAddModelObjectMutation, useGetDevModelQuery} from "../app/api/ModelsApi";
 import {useDispatch, useSelector} from 'react-redux';
 import {clearFormData, selectFormData, setFormData} from "../app/slices/formDataSlice";
-import {RootState} from '../app/Store';
-import {toggleTheme} from "../app/slices/themeSlice";
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
 import {CustomModal} from './CustomModal/CustomModal';
+import Switcher from "./Switcher";
 
 export const Header: FC = () => {
 
     const dispatch = useDispatch();
     const {modelName} = useParams();
-    const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
     const formData = useSelector(selectFormData);
 
     const [success, setSuccess] = React.useState(false)
@@ -32,13 +28,11 @@ export const Header: FC = () => {
     const handleOpenAddModal = () => setOpenAddModal(true);
     const handleCloseAddModal = () => setOpenAddModal(false);
 
-    const handleThemeToggle = () => {
-        dispatch(toggleTheme());
-    };
 
     const handleFieldChange = (fieldName: string, value: string) => {
         dispatch(setFormData({[fieldName]: value}));
     };
+
 
     const handleAddButtonClick = async () => {
         await addObject({modelName: modelName, body: formData})
@@ -75,16 +69,7 @@ export const Header: FC = () => {
                                 <AiOutlineHome/>
                             </IconButton>
                         </Link>
-                        <IconButton onClick={handleThemeToggle}
-                                    name="themeSwitch"
-                                    color="primary"
-                                    size={'medium'}
-                                    edge={'start'}
-                                    aria-label={'switchTheme'}
-                                    sx={{mr: 2}}
-                        >
-                            {isDarkMode ? (<DarkModeIcon/>) : (<LightModeIcon/>)}
-                        </IconButton>
+                        <Switcher/>
                         <Typography variant="h5" component="div" sx={{flexGrow: 1}}>
                             {modelName && devModel ? devModel.modelLabel ? `${devModel.modelLabel}` : `${devModel.modelName}` : 'Панель администратора'}
                         </Typography>
