@@ -15,7 +15,7 @@ import {
     Table,
     Paper,
     Skeleton,
-    ToggleButtonGroup, ToggleButton
+    ToggleButtonGroup, ToggleButton, Grid
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from 'react-redux';
@@ -123,8 +123,7 @@ export const ModelObjectsList = () => {
                     </div>
                 </div>
             </div>
-            <div className={styles.objectsListContainer}
-                 style={view === 'card' ? {flexWrap: 'wrap', gap: '15px'} : {}}>
+            <div className={styles.objectsListContainer}>
                 {
                     view === 'table' ? (
                         <>
@@ -196,16 +195,19 @@ export const ModelObjectsList = () => {
                                 </Stack>
                             </div>
                         ) : (
-                            filteredData.map((el: any) => (
-                                <ModelObject
-                                    key={el.id}
-                                    modelName={modelName}
-                                    id={el.id}
-                                    name={el.name === undefined ? el.title : el.name}
-                                    setError={setError}
-                                    setSuccess={setSuccess}
-                                />
-                            ))
+                            <Grid container spacing={2}>
+                                {filteredData.map((el: any) => (
+                                    <Grid item xs={12} sm={6} md={3} lg={2} key={el.id}>
+                                        <ModelObject
+                                            modelName={modelName}
+                                            id={el.id}
+                                            name={el.name === undefined ? el.title : el.name}
+                                            setError={setError}
+                                            setSuccess={setSuccess}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
                         )
                     )
                 }
