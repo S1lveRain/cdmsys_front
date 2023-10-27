@@ -7,6 +7,7 @@ import {
 } from "../../app/api/ModelsApi";
 import styles from './ModelObject.module.css'
 import {
+    Card, CardActionArea, CardActions, CardContent,
     IconButton,
     TableCell,
     TableRow,
@@ -16,6 +17,8 @@ import {editFormData, clearFormData, selectFormData} from '../../app/slices/form
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {CustomModal} from '../CustomModal/CustomModal';
+import {RootState} from "../../app/Store";
+import Typography from "@mui/material/Typography";
 
 interface ModelObjectI {
     modelName: string | undefined;
@@ -30,6 +33,8 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
     const [openEditModal, setOpenEditModal] = React.useState(false);
     const handleOpenEditModal = () => setOpenEditModal(true);
     const handleCloseEditModal = () => setOpenEditModal(false);
+
+    const view = useSelector((state: RootState) => state.dataView.view);
 
     const {data: object} = useGetOneModelObjectQuery({modelName, id});
     const [deleteObject] = useDeleteModelObjectMutation();
@@ -89,30 +94,64 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
 
     return (
         <>
-            <TableRow>
-                {modelName &&
-                    !isLoading &&
-                    devModel.fields &&
-                    devModel.fields.map((el: any) => {
-                        return (
-                            <TableCell key={el.fieldName}>
-                                {el.type === 'DATE' && object && object[el.fieldName]
-                                    ? formatDateTime(object[el.fieldName], el.fieldName)
-                                    : object?.[el.fieldName] || ''}
+            {view === 'table' ? (
+                <>
+                    <TableRow>
+                        {modelName &&
+                            !isLoading &&
+                            devModel.fields &&
+                            devModel.fields.map((el: any) => {
+                                return (
+                                    <TableCell key={el.fieldName}>
+                                        {el.type === 'DATE' && object && object[el.fieldName]
+                                            ? formatDateTime(object[el.fieldName], el.fieldName)
+                                            : object?.[el.fieldName] || ''}
 
-                            </TableCell>
-                        );
-                    })}
-                <TableCell>
-                    <IconButton aria-label="edit" color="primary" onClick={() => handleOpenEditModal()}>
-                        <EditIcon/>
-                    </IconButton>
-                    <IconButton aria-label="delete" color="error"
-                                onClick={() => modelName && handleDeleteObject(id, modelName)}>
-                        <DeleteIcon/>
-                    </IconButton>
-                </TableCell>
-            </TableRow>
+                                    </TableCell>
+                                );
+                            })}
+                        <TableCell>
+                            <IconButton aria-label="edit" color="primary" onClick={() => handleOpenEditModal()}>
+                                <EditIcon/>
+                            </IconButton>
+                            <IconButton aria-label="delete" color="error"
+                                        onClick={() => modelName && handleDeleteObject(id, modelName)}>
+                                <DeleteIcon/>
+                            </IconButton>
+                        </TableCell>
+                    </TableRow>
+                </>
+            ) : (
+                <div className={styles.itemWrapper}>
+                    <Card sx={{maxWidth: 345, height: '100%'}}>
+                        <CardActionArea>
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {name}
+                                </Typography>
+                                <Typography variant="subtitle1" color="text.secondary">
+                                    {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
+                                        return (
+                                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                                {`${el.fieldName}: ${object?.[el.fieldName]}`}
+                                            </div>
+                                        )
+                                    })}
+                                </Typography>
+                            </CardContent>
+                            <CardActions disableSpacing>
+                                <IconButton aria-label="edit" color={'primary'} onClick={() => handleOpenEditModal()}>
+                                    <EditIcon/>
+                                </IconButton>
+                                <IconButton aria-label="delete" color={'error'}
+                                            onClick={() => modelName && handleDeleteObject(id, modelName)}>
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </CardActions>
+                        </CardActionArea>
+                    </Card>
+                </div>
+            )}
             {
                 !isLoading && devModel && (
                     <CustomModal
@@ -126,5 +165,6 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                 )
             }
         </>
-    );
+    )
+        ;
 };

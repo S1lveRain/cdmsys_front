@@ -14,16 +14,26 @@ import {
     TableBody,
     Table,
     Paper,
-    Skeleton
+    Skeleton,
+    ToggleButtonGroup, ToggleButton
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from "../../app/Store";
+import {setView} from "../../app/slices/dataViewSlice";
+import Stack from "@mui/material/Stack";
+import TableChartIcon from '@mui/icons-material/TableChart';
+import GridViewIcon from '@mui/icons-material/GridView';
+
 
 export const ModelObjectsList = () => {
     const {modelName} = useParams();
-
+    const dispatch = useDispatch();
     const {data} = useGetModelQuery(modelName);
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
+
+    const view = useSelector((state: RootState) => state.dataView.view);
 
     const [success, setSuccess] = React.useState(false)
     const [error, setError] = React.useState(false)
@@ -39,6 +49,12 @@ export const ModelObjectsList = () => {
 
     const handleSearchChange = (event: any) => {
         setSearchTerm(event.target.value);
+    };
+
+    const handleChangeView = (event: any, newAlignment: any) => {
+        if (newAlignment !== null) {
+            dispatch(setView(newAlignment));
+        }
     };
 
     const filteredData = data
@@ -66,81 +82,134 @@ export const ModelObjectsList = () => {
                     }}>Произошла ошибка! Для более подробной информации проверьте консоль</Alert>
                 )
             }
-            <div className={styles.searchBarContainer}>
-                <TextField
-                    label="Поиск"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton>
-                                    <SearchIcon/>
+            <div className={styles.optionsWrapper}>
+                <div className={styles.optionsContainer}>
+                    <div>
+                        <TextField
+                            label="Поиск"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton>
+                                            <SearchIcon/>
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </div>
+                    <div className={styles.switchViewContainer}>
+                        <ToggleButtonGroup
+                            color="primary"
+                            value={view}
+                            exclusive
+                            onChange={handleChangeView}
+                            aria-label="Platform"
+                            size={'small'}
+                        >
+                            <ToggleButton value="table">
+                                <IconButton size={'small'}>
+                                    <TableChartIcon color={'primary'}/>
                                 </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-
+                            </ToggleButton>
+                            <ToggleButton value="card">
+                                <IconButton size={'small'}>
+                                    <GridViewIcon color={'primary'}/>
+                                </IconButton>
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </div>
+                </div>
             </div>
-            <div className={styles.objectsListContainer}>
-                <Paper style={{width: '100%'}}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                {
-                                    isLoading ? (
-                                        arr.map(() => (
-                                            <TableCell>
-                                                <Skeleton animation="wave" variant="text"/>
-                                            </TableCell>
-                                        ))
-                                    ) : (
-                                        <>
-                                            {devModel && devModel.fields.map((el: any) => (
-                                                <TableCell key={el.fieldName}>
-                                                    {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
-                                                </TableCell>
-                                            ))}
-                                            <TableCell> Действия </TableCell>
-                                        </>
-                                    )
-                                }
-
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {
-                                isLoading ? (
-                                    arr.map(() => (
+            <div className={styles.objectsListContainer}
+                 style={view === 'card' ? {flexWrap: 'wrap', gap: '15px'} : {}}>
+                {
+                    view === 'table' ? (
+                        <>
+                            <Paper style={{width: '100%'}}>
+                                <Table>
+                                    <TableHead>
                                         <TableRow>
-                                            {arr.map(() => (
-                                                <TableCell component="th" scope="row">
-                                                    <Skeleton animation="wave" variant="text"/>
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    filteredData.map((el: any) => (
-                                        <ModelObject
-                                            key={el.id}
-                                            modelName={modelName}
-                                            id={el.id}
-                                            name={el.name === undefined ? el.title : el.name}
-                                            setError={setError}
-                                            setSuccess={setSuccess}
-                                        />
-                                    ))
-                                )
-                            }
-                        </TableBody>
-                    </Table>
-                </Paper>
-            </div>
+                                            {
+                                                isLoading ? (
+                                                    arr.map(() => (
+                                                        <TableCell>
+                                                            <Skeleton animation="wave" variant="text"/>
+                                                        </TableCell>
+                                                    ))
+                                                ) : (
+                                                    <>
+                                                        {devModel && devModel.fields.map((el: any) => (
+                                                            <TableCell key={el.fieldName}>
+                                                                {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
+                                                            </TableCell>
+                                                        ))}
+                                                        <TableCell> Действия </TableCell>
+                                                    </>
+                                                )
+                                            }
 
+                                        </TableRow>
+                                    </TableHead>
+
+                                    <TableBody>
+                                        {
+                                            isLoading ? (
+                                                arr.map(() => (
+                                                    <TableRow>
+                                                        {arr.map(() => (
+                                                            <TableCell component="th" scope="row">
+                                                                <Skeleton animation="wave" variant="text"/>
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                filteredData.map((el: any) => (
+                                                    <ModelObject
+                                                        key={el.id}
+                                                        modelName={modelName}
+                                                        id={el.id}
+                                                        name={el.name === undefined ? el.title : el.name}
+                                                        setError={setError}
+                                                        setSuccess={setSuccess}
+                                                    />
+                                                ))
+                                            )
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </Paper>
+                        </>
+                    ) : (
+                        isLoading ? (
+                            <div className={styles.loadingContainer}>
+                                <Stack flexDirection={'row'} flexWrap={'wrap'} gap={'15px'}>
+                                    {
+                                        arr.map(() => {
+                                            return (
+                                                <Skeleton style={{height: 236, width: 345}} variant={'rectangular'}/>)
+                                        })
+                                    }
+                                </Stack>
+                            </div>
+                        ) : (
+                            filteredData.map((el: any) => (
+                                <ModelObject
+                                    key={el.id}
+                                    modelName={modelName}
+                                    id={el.id}
+                                    name={el.name === undefined ? el.title : el.name}
+                                    setError={setError}
+                                    setSuccess={setSuccess}
+                                />
+                            ))
+                        )
+                    )
+                }
+            </div>
         </>
-    )
-        ;
+    );
 };

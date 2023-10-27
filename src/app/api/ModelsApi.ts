@@ -34,7 +34,7 @@ export const modelsApi = createApi({
                 url: `/${modelName}/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: [{type: 'Objects', id: 'LIST'}],
+            invalidatesTags: [{type: 'Objects', id: 'LIST'}, {type: 'Models', id: 'LIST'}],
         }),
         addModelObject: build.mutation({
             query: ({modelName, body}) => ({

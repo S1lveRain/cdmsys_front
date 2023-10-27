@@ -13,8 +13,25 @@
     display: flex;
 }
 
-.searchBarContainer {
+.optionsWrapper {
     padding: 15px;
     display: flex;
     justify-content: flex-end;
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.switchViewContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
