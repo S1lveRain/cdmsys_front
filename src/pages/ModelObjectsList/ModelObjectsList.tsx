@@ -186,7 +186,7 @@ export const ModelObjectsList = () => {
                     ) : (
                         isLoading ? (
                             <div className={styles.loadingContainer}>
-                                <Stack flexDirection={'row'} flexWrap={'wrap'} gap={'15px'}>
+                                <Stack flexDirection={'row'} flexWrap={'wrap'} gap={'15px'} justifyContent={'center'}>
                                     {
                                         arr.map(() => {
                                             return (
