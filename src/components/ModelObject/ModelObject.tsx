@@ -105,7 +105,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     <TableCell key={el.fieldName}>
                                         {el.type === 'DATE' && object && object[el.fieldName]
                                             ? formatDateTime(object[el.fieldName], el.fieldName)
-                                            : object?.[el.fieldName] || ''}
+                                            : object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.name || ''}
 
                                     </TableCell>
                                 );
