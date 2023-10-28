@@ -105,7 +105,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     <TableCell key={el.fieldName}>
                                         {el.type === 'DATE' && object && object[el.fieldName]
                                             ? formatDateTime(object[el.fieldName], el.fieldName)
-                                            : object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.name || ''}
+                                            : object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || ''}
 
                                     </TableCell>
                                 );
@@ -133,7 +133,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
                                         return (
                                             <div style={{display: 'flex', flexDirection: 'column'}}>
-                                                {`${el.fieldName}: ${object?.[el.fieldName]}`}
+                                                {`${el.fieldName}: ${object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id|| object?.[el.fieldName]}`}
                                             </div>
                                         )
                                     })}
