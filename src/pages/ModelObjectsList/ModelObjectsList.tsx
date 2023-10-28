@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
-import {useGetDevModelQuery, useGetModelQuery} from "../../app/api/ModelsApi";
+import {useGetDevModelQuery, useGetModelQuery, useGetModelsQuery} from "../../app/api/ModelsApi";
 import styles from './ModelObjectsList.module.css'
 import {ModelObject} from "../../components/ModelObject/ModelObject";
 import {
@@ -31,6 +31,8 @@ export const ModelObjectsList = () => {
     const dispatch = useDispatch();
     const {data} = useGetModelQuery(modelName);
 
+    const {data: devModelsList, isLoading: isModelsLoading} = useGetModelsQuery('');
+
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
 
     const view = useSelector((state: RootState) => state.dataView.view);
@@ -56,6 +58,19 @@ export const ModelObjectsList = () => {
             dispatch(setView(newAlignment));
         }
     };
+
+    function singularizeLabel(label: string, count: number) {
+        if (count === 1) {
+            return label;
+        } else {
+            if (label.endsWith("и") || label.endsWith("ы")) {
+                return label.slice(0, -1);
+            } else {
+                return label;
+            }
+        }
+    }
+
 
     const filteredData = data
         ? data.filter((el: any) => {
@@ -140,12 +155,25 @@ export const ModelObjectsList = () => {
                                                     ))
                                                 ) : (
                                                     <>
-                                                        {devModel && devModel.fields.map((el: any) => (
-                                                            <TableCell key={el.fieldName}>
-                                                                {el.fieldName === 'createdAt' ? 'Создано' : el.fieldName === 'updatedAt' ? 'Изменено' : (el.label ? el.label : el.fieldName)}
-                                                            </TableCell>
-                                                        ))}
-                                                        <TableCell> Действия </TableCell>
+                                                        {devModel &&
+                                                            devModel.fields.map((el: any) => {
+                                                                const modelMatch = !isModelsLoading && devModelsList.find((model: any) => model.modelName.toLowerCase() === el.fieldName);
+                                                                const label = modelMatch ? modelMatch.modelLabel : el.label || el.fieldName;
+                                                                const singularizedLabel = singularizeLabel(label, modelMatch ? modelMatch.count : 1);
+
+                                                                return (
+                                                                    <TableCell key={el.fieldName}>
+                                                                        {el.fieldName === 'createdAt'
+                                                                            ? 'Создано'
+                                                                            : el.fieldName === 'updatedAt'
+                                                                                ? 'Изменено'
+                                                                                : singularizedLabel}
+                                                                    </TableCell>
+                                                                );
+                                                            })}
+
+
+                                                        <TableCell>Действия</TableCell>
                                                     </>
                                                 )
                                             }
