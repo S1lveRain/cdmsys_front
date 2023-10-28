@@ -7,6 +7,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {useSelector} from "react-redux";
 import {RootState} from "../../app/Store";
+import {FormControl, InputLabel, MenuItem, Select} from '@mui/material';
+import {useGetModelQuery} from "../../app/api/ModelsApi";
 
 interface CustomModalI {
     open: boolean;
@@ -28,6 +30,8 @@ export const CustomModal: FC<CustomModalI> = ({
 
 
     const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
+
+    const {data: model} = useGetModelQuery('genre');
 
     const modalStyle = {
         position: 'absolute' as 'absolute',
@@ -60,6 +64,7 @@ export const CustomModal: FC<CustomModalI> = ({
                             if (el.fieldName === 'id' || el.fieldName === 'createdAt' || el.fieldName === 'updatedAt') {
                                 return null;
                             }
+
                             return (
                                 <div key={el.fieldName}>
                                     {
@@ -78,6 +83,25 @@ export const CustomModal: FC<CustomModalI> = ({
                                                     fullWidth
                                                 />
                                             </InputMask>
+                                        ) : el.type === 'UUID' ? (
+                                            <FormControl style={{width: '100%'}}>
+                                                <InputLabel
+                                                    id="demo-simple-select-autowidth-label">{el.fieldName}</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-autowidth-label"
+                                                    id="demo-simple-select-autowidth"
+                                                    defaultValue={object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || 'null' || ''}
+                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
+                                                    fullWidth
+                                                    label="links"
+                                                >
+                                                    {model && model.map((mdl: any) => (
+                                                        <MenuItem key={mdl.id} value={mdl.id}>
+                                                            {mdl.id}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
                                         ) : (
                                             <TextField
                                                 id={el.fieldName}
