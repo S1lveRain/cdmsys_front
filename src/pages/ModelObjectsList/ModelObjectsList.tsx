@@ -53,7 +53,7 @@ export const ModelObjectsList = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleChangeView = (newAlignment: any) => {
+    const handleChangeView = (event: any, newAlignment: any) => {
         if (newAlignment !== null) {
             dispatch(setView(newAlignment));
         }
