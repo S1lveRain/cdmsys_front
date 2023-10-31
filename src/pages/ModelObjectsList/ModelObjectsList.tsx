@@ -66,7 +66,7 @@ export const ModelObjectsList = () => {
         })
         : [];
 
-    let arr = Array.from({length: 5}, (_, idx) => `${++idx}`)
+    let arr = Array.from({length: 10}, (_, idx) => `${++idx}`)
 
     return (
         <>
@@ -198,16 +198,16 @@ export const ModelObjectsList = () => {
                         </>
                     ) : (
                         isLoading ? (
-                            <div className={styles.loadingContainer}>
-                                <Stack flexDirection={'row'} flexWrap={'wrap'} gap={'15px'} justifyContent={'center'}>
-                                    {
-                                        arr.map(() => {
-                                            return (
-                                                <Skeleton style={{height: 236, width: 345}} variant={'rectangular'}/>)
-                                        })
-                                    }
-                                </Stack>
-                            </div>
+                            <Grid container spacing={2}>
+                                {
+                                    arr.map(() => {
+                                        return (
+                                            <Grid item xs={12} sm={6} md={3} lg={2}>
+                                                <Skeleton style={{height: 464}} variant={'rectangular'}/>
+                                            </Grid>
+                                        )})
+                                }
+                            </Grid>
                         ) : (
                             <Grid container spacing={2}>
                                 {filteredData.map((el: any) => (
