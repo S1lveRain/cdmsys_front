@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import {useSelector} from "react-redux";
 import {RootState} from "../../app/Store";
 import {FormControl, InputLabel, MenuItem, Select} from '@mui/material';
-import {useGetModelQuery} from "../../app/api/ModelsApi";
+import {useGetModelsQuery} from "../../app/api/ModelsApi";
 import axios from "axios";
 
 interface CustomModalI {
@@ -32,14 +32,17 @@ export const CustomModal: FC<CustomModalI> = ({
 
     const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
 
-    const [model, setModel] = useState<(false | { [x: string]: any; } | null)[]>([]);
+    const {data: devModelsList, isLoading: isModelsLoading} = useGetModelsQuery('');
+
+    const [model, setModel] = useState<({ [x: string]: string; } | null)[]>([]);
+
     async function fetchDataForFieldName(fieldName: string) {
         try {
             const response = await axios.get(`http://localhost:8000/${fieldName}`);
 
             if (response.status === 200) {
                 const responseData = response.data;
-                return { [fieldName]: responseData };
+                return {[fieldName]: responseData};
             } else {
                 console.error('Request failed with status code:', response.status);
                 return null;
@@ -54,11 +57,11 @@ export const CustomModal: FC<CustomModalI> = ({
         const fetchData = async () => {
             const newData = await Promise.all(
                 devModelFields
-                    .filter((el) => el.fieldName !== 'id' && el.fieldName !== 'createdAt' && el.fieldName !== 'updatedAt')
-                    .map(async (el) => await el.type === 'UUID' && el.fieldName !== 'id' &&  fetchDataForFieldName(el.fieldName))
+                    .filter((el) => el.fieldName !== 'id' && el.fieldName !== 'createdAt' && el.fieldName !== 'updatedAt' && el.type === 'UUID')
+                    .map(async (el) => await fetchDataForFieldName(el.fieldName))
             );
             if (newData) {
-                const filteredData = newData.filter((data) => data !== null && data !== false);
+                const filteredData = newData.filter((data) => data !== null);
                 setModel(filteredData);
             }
         };
@@ -78,6 +81,17 @@ export const CustomModal: FC<CustomModalI> = ({
         p: 4,
     };
 
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+
 
     return (
         <Modal
@@ -95,66 +109,73 @@ export const CustomModal: FC<CustomModalI> = ({
                         {devModelFields &&
                             devModelFields
                                 .filter((el) => el.fieldName !== 'id' && el.fieldName !== 'createdAt' && el.fieldName !== 'updatedAt')
-                                .map((el, index) => (
-                                    <div key={el.fieldName}>
-                                        {
-                                            el.type === 'DATE' ? (
-                                                <InputMask
-                                                    mask="9999-99-99"
-                                                    maskChar="_"
-                                                    defaultValue={object?.[el.fieldName] || ''}
-                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                                >
+                                .map((el) => {
+
+                                    const modelMatch = !isModelsLoading && devModelsList.find((model: any) => model.modelName.toLowerCase() === el.fieldName);
+                                    const label = modelMatch ? modelMatch.modelLabel : el.label || el.fieldName;
+
+                                    return(
+                                        <div key={el.fieldName}>
+                                            {
+                                                el.type === 'DATE' ? (
+                                                    <InputMask
+                                                        mask="9999-99-99"
+                                                        maskChar="_"
+                                                        defaultValue={object?.[el.fieldName] || ''}
+                                                        onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
+                                                    >
+                                                        <TextField
+                                                            id="filled-basic"
+                                                            label={el.label ? el.label : label ? label : el.fieldName}
+                                                            variant="outlined"
+                                                            size={'medium'}
+                                                            fullWidth
+                                                        />
+                                                    </InputMask>
+                                                ) : el.type === 'UUID' ? (
+                                                    <FormControl style={{width: '100%'}}>
+                                                        <InputLabel
+                                                            id="demo-simple-select-autowidth-label">{el.label ? el.label : label ? label : el.fieldName}</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-autowidth-label"
+                                                            id="demo-simple-select-autowidth"
+                                                            defaultValue={object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || 'null' || ''}
+                                                            onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
+                                                            fullWidth
+                                                            label="links"
+                                                        >
+                                                            {model && model.map((mdl: any) => {
+                                                                if (mdl[el.fieldName]) {
+                                                                    return mdl[el.fieldName].map((item: any) => (
+                                                                        <MenuItem key={item.id} value={item.id}>
+                                                                            {item.name ? item.name : item.id}
+                                                                        </MenuItem>
+                                                                    ));
+                                                                }
+                                                                return null;
+                                                            })}
+                                                        </Select>
+                                                    </FormControl>
+                                                ) : (
                                                     <TextField
-                                                        id="filled-basic"
-                                                        label={el.label ? el.label : el.fieldName}
+                                                        id={el.fieldName}
+                                                        label={el.label ? el.label : label ? label : el.fieldName}
                                                         variant="outlined"
+                                                        defaultValue={object?.[el.fieldName] || ''}
+                                                        onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
                                                         size={'medium'}
                                                         fullWidth
                                                     />
-                                                </InputMask>
-                                            ) : el.type === 'UUID' ? (
-                                                <FormControl style={{width: '100%'}}>
-                                                    <InputLabel
-                                                        id="demo-simple-select-autowidth-label">{el.fieldName}</InputLabel>
-                                                    <Select
-                                                        labelId="demo-simple-select-autowidth-label"
-                                                        id="demo-simple-select-autowidth"
-                                                        defaultValue={object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || 'null' || ''}
-                                                        onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                                        fullWidth
-                                                        label="links"
-                                                    >
-                                                        {model && model.map((mdl: any) => {
-                                                            if (mdl[el.fieldName]) {
-                                                                return mdl[el.fieldName].map((item: any) => (
-                                                                    <MenuItem key={item.id} value={item.id}>
-                                                                        {item.id}
-                                                                    </MenuItem>
-                                                                ));
-                                                            }
-                                                            return null;
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                            ) : (
-                                                <TextField
-                                                    id={el.fieldName}
-                                                    label={el.label ? el.label : el.fieldName}
-                                                    variant="outlined"
-                                                    defaultValue={object?.[el.fieldName] || ''}
-                                                    onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
-                                                    size={'medium'}
-                                                    fullWidth
-                                                />
-                                            )
-                                        }
-                                    </div>
-                                ))}
+                                                )
+                                            }
+                                        </div>
+                                    );
+                                })}
                         <Button variant={'outlined'} size={'large'} onClick={handleSave}>Сохранить</Button>
                     </div>
                 </Typography>
             </Box>
         </Modal>
-    );
+    )
+        ;
 };

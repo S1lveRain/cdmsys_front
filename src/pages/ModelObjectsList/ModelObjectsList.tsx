@@ -53,24 +53,11 @@ export const ModelObjectsList = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleChangeView = (event: any, newAlignment: any) => {
+    const handleChangeView = (newAlignment: any) => {
         if (newAlignment !== null) {
             dispatch(setView(newAlignment));
         }
     };
-
-    function singularizeLabel(label: string, count: number) {
-        if (count === 1) {
-            return label;
-        } else {
-            if (label.endsWith("и") || label.endsWith("ы")) {
-                return label.slice(0, -1);
-            } else {
-                return label;
-            }
-        }
-    }
-
 
     const filteredData = data
         ? data.filter((el: any) => {
@@ -159,7 +146,6 @@ export const ModelObjectsList = () => {
                                                             devModel.fields.map((el: any) => {
                                                                 const modelMatch = !isModelsLoading && devModelsList.find((model: any) => model.modelName.toLowerCase() === el.fieldName);
                                                                 const label = modelMatch ? modelMatch.modelLabel : el.label || el.fieldName;
-                                                                const singularizedLabel = singularizeLabel(label, modelMatch ? modelMatch.count : 1);
 
                                                                 return (
                                                                     <TableCell key={el.fieldName}>
@@ -167,7 +153,7 @@ export const ModelObjectsList = () => {
                                                                             ? 'Создано'
                                                                             : el.fieldName === 'updatedAt'
                                                                                 ? 'Изменено'
-                                                                                : singularizedLabel}
+                                                                                : label}
                                                                     </TableCell>
                                                                 );
                                                             })}
