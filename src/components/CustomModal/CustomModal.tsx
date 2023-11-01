@@ -29,17 +29,15 @@ export const CustomModal: FC<CustomModalI> = ({
                                                   handleSave,
                                               }) => {
 
-
     const isDarkMode = useSelector((state: RootState) => state.theme.darkMode);
 
     const {data: devModelsList, isLoading: isModelsLoading} = useGetModelsQuery('');
 
     const [model, setModel] = useState<({ [x: string]: string; } | null)[]>([]);
 
-    async function fetchDataForFieldName(fieldName: string) {
+    const fetchDataForFieldName = async (fieldName: string) => {
         try {
             const response = await axios.get(`http://localhost:8000/${fieldName}`);
-
             if (response.status === 200) {
                 const responseData = response.data;
                 return {[fieldName]: responseData};
@@ -81,17 +79,6 @@ export const CustomModal: FC<CustomModalI> = ({
         p: 4,
     };
 
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-        PaperProps: {
-            style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
-            },
-        },
-    };
-
 
     return (
         <Modal
@@ -114,7 +101,7 @@ export const CustomModal: FC<CustomModalI> = ({
                                     const modelMatch = !isModelsLoading && devModelsList.find((model: any) => model.modelName.toLowerCase() === el.fieldName);
                                     const label = modelMatch ? modelMatch.modelLabel : el.label || el.fieldName;
 
-                                    return(
+                                    return (
                                         <div key={el.fieldName}>
                                             {
                                                 el.type === 'DATE' ? (
@@ -144,16 +131,18 @@ export const CustomModal: FC<CustomModalI> = ({
                                                             fullWidth
                                                             label="links"
                                                         >
-                                                            {model && model.map((mdl: any) => {
-                                                                if (mdl[el.fieldName]) {
-                                                                    return mdl[el.fieldName].map((item: any) => (
-                                                                        <MenuItem key={item.id} value={item.id}>
-                                                                            {item.name ? item.name : item.id}
-                                                                        </MenuItem>
-                                                                    ));
-                                                                }
-                                                                return null;
-                                                            })}
+                                                            {
+                                                                model && model.map((mdl: any) => {
+                                                                    if (mdl[el.fieldName]) {
+                                                                        return mdl[el.fieldName].map((item: any) => (
+                                                                            <MenuItem key={item.id} value={item.id}>
+                                                                                {item.name ? item.name : item.id}
+                                                                            </MenuItem>
+                                                                        ));
+                                                                    }
+                                                                    return null;
+                                                                })
+                                                            }
                                                         </Select>
                                                     </FormControl>
                                                 ) : (
@@ -176,6 +165,5 @@ export const CustomModal: FC<CustomModalI> = ({
                 </Typography>
             </Box>
         </Modal>
-    )
-        ;
+    );
 };
