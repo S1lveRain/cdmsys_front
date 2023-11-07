@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {
     useDeleteModelObjectMutation,
-    useGetDevModelQuery,
+    useGetDevModelQuery, useGetModelsQuery,
     useGetOneModelObjectQuery,
     useUpdateModelObjectMutation
 } from "../../app/api/ModelsApi";
@@ -54,6 +54,8 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
 
 
     const {data: devModel, isLoading} = useGetDevModelQuery(modelName);
+    const {data: devModels, isLoading: isDevModelsLoading} = useGetModelsQuery('');
+
 
     const dispatch = useDispatch();
     const fieldValues = useSelector(selectFormData);
@@ -101,12 +103,20 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                             !isLoading &&
                             devModel.fields &&
                             devModel.fields.map((el: any) => {
+                                const capitalizeElFieldName = el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1);
+
+                                const mainLabelField = devModels && devModels
+                                    .find((dev: any) => dev.modelName === capitalizeElFieldName)
+                                    ?.fields.find((field: any) => field.isMainlabel === true)
+                                    ?.fieldName;
+
                                 return (
                                     <TableCell key={el.fieldName}>
                                         {el.type === 'DATE' && object && object[el.fieldName]
                                             ? formatDateTime(object[el.fieldName], el.fieldName)
-                                            : object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || ''}
-
+                                            : (object?.[el.fieldName] ||
+                                                (mainLabelField && object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.[mainLabelField])
+                                                || (object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id) || '')}
                                     </TableCell>
                                 );
                             })}
@@ -133,7 +143,7 @@ export const ModelObject: FC<ModelObjectI> = ({modelName, id, name, setError, se
                                     {modelName && !isLoading && devModel.fields && devModel.fields.map((el: any) => {
                                         return (
                                             <div style={{display: 'flex', flexDirection: 'column'}}>
-                                                {`${el.fieldName}: ${object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id|| object?.[el.fieldName]}`}
+                                                {`${el.fieldName}: ${object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || object?.[el.fieldName]}`}
                                             </div>
                                         )
                                     })}

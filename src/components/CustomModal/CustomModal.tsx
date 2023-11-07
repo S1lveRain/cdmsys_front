@@ -137,9 +137,17 @@ export const CustomModal: FC<CustomModalI> = ({
                                                             {
                                                                 model && model.map((mdl: any) => {
                                                                     if (mdl[el.fieldName]) {
+
+                                                                        const capitalizeElFieldName = el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1);
+
+                                                                        const mainLabelField = devModelsList && devModelsList
+                                                                            .find((dev: any) => dev.modelName === capitalizeElFieldName)
+                                                                            ?.fields.find((field: any) => field.isMainlabel === true)
+                                                                            ?.fieldName;
+
                                                                         return mdl[el.fieldName].map((item: any) => (
                                                                             <MenuItem key={item.id} value={item.id}>
-                                                                                {item.name ? item.name : item.id}
+                                                                                {mainLabelField ? item[mainLabelField] : item.id}
                                                                             </MenuItem>
                                                                         ));
                                                                     }
