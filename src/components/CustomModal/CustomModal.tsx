@@ -126,11 +126,14 @@ export const CustomModal: FC<CustomModalI> = ({
                                                         <Select
                                                             labelId="demo-simple-select-autowidth-label"
                                                             id="demo-simple-select-autowidth"
-                                                            defaultValue={object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || 'null' || ''}
+                                                            defaultValue={object?.[el.fieldName] || object?.[el.fieldName.charAt(0).toUpperCase() + el.fieldName.slice(1)]?.id || '00000000-0000-0000-0000-000000000000' || ''}
                                                             onChange={(e) => handleFieldChange(el.fieldName, e.target.value)}
                                                             fullWidth
                                                             label="links"
                                                         >
+                                                            <MenuItem value={'00000000-0000-0000-0000-000000000000'}>
+                                                                Нет
+                                                            </MenuItem>
                                                             {
                                                                 model && model.map((mdl: any) => {
                                                                     if (mdl[el.fieldName]) {
